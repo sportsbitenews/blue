@@ -29,6 +29,7 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
         id: uniqueID(),
         isMounted: props.isOpen
       })
+      this.triggerNode = null
     }
 
     componentDidMount () {
@@ -125,6 +126,7 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
               closePortal={handleOnClose}
               portalIsOpen={portalIsOpen}
               portalIsMounted={portalIsMounted}
+              triggerNode={this.triggerNode}
               zIndex={zIndex}
               {...rest}
             />
@@ -138,7 +140,8 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
 
       const triggerMarkup = trigger
         ? React.cloneElement(trigger, {
-          onClick: openPortal
+          onClick: openPortal,
+          ref: node => this.triggerNode = node
         })
         : null
 
