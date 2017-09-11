@@ -42,6 +42,7 @@ const Modal = props => {
     style,
     timeout,
     trigger,
+    triggerNode,
     zIndex,
     ...rest
   } = props
