@@ -141,7 +141,7 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
       const triggerMarkup = trigger
         ? React.cloneElement(trigger, {
           onClick: openPortal,
-          ref: node => this.triggerNode = node
+          ref: node => { this.triggerNode = node }
         })
         : null
 

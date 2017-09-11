@@ -23,7 +23,7 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
   const portalOptions = Object.assign({}, defaultOptions, options)
 
   class PopoverWrapperComponent extends Component {
-    constructor(props) {
+    constructor (props) {
       super()
 
       this.popover = null
@@ -59,15 +59,13 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
         }
       }
 
-      const top = reposition ?
-        clientRect.top - clientRect.height - popoverClientRect.height
-        :
-        clientRect.top + clientRect.height
+      const top = reposition
+        ? clientRect.top - clientRect.height - popoverClientRect.height
+        : clientRect.top + clientRect.height
 
-      const left = reposition ?
-        (clientRect.left + clientRect.width) - popoverClientRect.width
-        :
-        clientRect.left
+      const left = reposition
+        ? (clientRect.left + clientRect.width) - popoverClientRect.width
+        : clientRect.left
 
       const position = {
         top: parseInt(top + offset + window.scrollY, 10),
@@ -85,7 +83,7 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
       }
     }
 
-    render() {
+    render () {
       const {
         className,
         closePortal,
@@ -123,10 +121,10 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
           <EventListener event='resize' handler={updatePosition} />
           <Animate sequence='fadeIn' in={portalIsOpen} wait={60}>
             <div>
-              <div 
+              <div
                 className={componentClassName}
                 style={popoverWrapperStyle}
-                ref={node => this.popover = node}
+                ref={node => { this.popover = node }}
                 {...rest}
               >
                 <ComposedComponent

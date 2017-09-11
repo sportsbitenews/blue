@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import Card from '../Card'
 import PopoverWrapper from '../PopoverWrapper'
 import classNames from '../../utilities/classNames'
@@ -10,15 +9,14 @@ const defaultProps = {
 }
 
 const popoverWrapperOptions = {
-  id: 'Dropdown',
+  id: 'Dropdown'
 }
 
 const Dropdown = props => {
   const {
     children,
     className,
-    isOpen,
-    ...rest
+    isOpen
   } = props
 
   const componentClassName = classNames(

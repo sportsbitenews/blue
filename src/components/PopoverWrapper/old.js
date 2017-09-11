@@ -1,5 +1,4 @@
 import React, { PureComponent as Component } from 'react'
-import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import EventListener from '../EventListener'
 import Overlay from '../Overlay'
@@ -47,7 +46,6 @@ class Popover extends Component {
     let reposition = false
     let popoverClientRect
 
-
     if (this.popover) {
       popoverClientRect = this.popover.getBoundingClientRect()
       if (popoverClientRect.top + popoverClientRect.height > window.innerHeight) {
@@ -55,10 +53,9 @@ class Popover extends Component {
       }
     }
 
-    const top = reposition ?
-      clientRect.top - clientRect.height - popoverClientRect.height
-      :
-      clientRect.top + clientRect.height
+    const top = reposition
+      ? clientRect.top - clientRect.height - popoverClientRect.height
+      : clientRect.top + clientRect.height
 
     const position = {
       top: top + offset + window.scrollY,
@@ -110,7 +107,6 @@ class Popover extends Component {
     const handleOnTrigger = this.handleOnTrigger.bind(this)
     const handlePortalOnOpen = this.handlePortalOnOpen.bind(this)
     const updatePosition = this.updatePosition.bind(this)
-
 
     const componentClassName = classNames(
       'c-Popover',
@@ -167,4 +163,3 @@ Popover.propTypes = propTypes
 Popover.defaultProps = defaultProps
 
 export default Popover
-
