@@ -22,12 +22,12 @@ class KeypressListener extends Component {
   }
 
   componentDidMount () {
-    const node = document
+    const node = this.props.node ? this.props.node : document
     addEventListener(node, 'keyup', this.handleKeyEvent)
   }
 
   componentWillUnmount () {
-    const node = document
+    const node = this.props.node ? this.props.node : document
     removeEventListener(node, 'keyup', this.handleKeyEvent)
   }
 

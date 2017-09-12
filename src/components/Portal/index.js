@@ -13,6 +13,8 @@ export const propTypes = {
   ]),
   onBeforeOpen: PropTypes.func,
   onOpen: PropTypes.func,
+  onKeyPressDown: PropTypes.func,
+  onKeyPressUp: PropTypes.func,
   onBeforeClose: PropTypes.func,
   onClose: PropTypes.func,
   path: PropTypes.string,

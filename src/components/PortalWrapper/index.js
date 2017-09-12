@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 import { Route } from 'react-router-dom'
 import Animate from '../Animate'
 import KeypressListener from '../KeypressListener'
@@ -9,7 +10,8 @@ import { createUniqueIDFactory } from '../../utilities/id'
 const ANIMATION_TIMEOUT = 200
 
 const defaultOptions = {
-  id: 'PortalWrapper'
+  id: 'PortalWrapper',
+  openOnArrowDown: false
 }
 
 const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
@@ -80,6 +82,16 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
       }
     }
 
+    handleOnDownArrow (event) {
+      if (event.keyCode === Keys.DOWN_ARROW) {
+        const triggerNode = ReactDOM.findDOMNode(this.triggerNode)
+        const { isOpen, openOnArrowDown } = this.state
+        if (event.target === triggerNode && !isOpen && openOnArrowDown) {
+          this.openPortal()
+        }
+      }
+    }
+
     render () {
       const {
         exact,
@@ -99,6 +111,7 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
 
       const openPortal = this.openPortal.bind(this)
       const handleOnClose = this.handleOnClose.bind(this)
+      const handleOnDownArrow = this.handleOnDownArrow.bind(this)
 
       const uniqueIndex = parseInt(id.replace(options.id, ''), 10)
       const zIndex = options.zIndex ? options.zIndex + uniqueIndex : null
@@ -141,7 +154,8 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
       const triggerMarkup = trigger
         ? React.cloneElement(trigger, {
           onClick: openPortal,
-          ref: node => { this.triggerNode = node }
+          ref: node => { this.triggerNode = node },
+          onKeyUp: handleOnDownArrow
         })
         : null
 

@@ -1,5 +1,7 @@
 import React, {PureComponent as Component} from 'react'
+import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
+import {findFirstFocusableNode} from '@shopify/javascript-utilities/focus'
 import Animate from '../Animate'
 import EventListener from '../EventListener'
 import Overlay from '../Overlay'
@@ -15,45 +17,76 @@ const popoverWrapperBaseZIndex = 1020
 
 const defaultOptions = {
   id: 'PopoverWrapper',
+  offset: 8,
   timeout: 200,
   zIndex: popoverWrapperBaseZIndex
 }
 
 const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
-  const portalOptions = Object.assign({}, defaultOptions, options)
+  const popoverOptions = Object.assign({}, defaultOptions, options)
 
   class PopoverWrapperComponent extends Component {
     constructor (props) {
       super()
 
-      this.popover = null
+      this.contentNode = null
+      this.composedNode = null
       this.portal = null
-      this.triggerNode = props.triggerNode
 
       this.state = {
         position: {
           top: null,
           left: null
         },
-        isOpen: props.protalIsOpen
+        isOpen: false
       }
     }
 
+    componentDidMount () {
+      this.setTriggerNode()
+    }
+
     componentWillReceiveProps (props) {
+      this.setState({ isOpen: props.portalIsOpen })
       this.updatePosition()
     }
 
-    updatePosition (force = false) {
-      // if (force !== true && !this.state.isOpen) return
+    componentDidUpdate () {
+      this.setTriggerNode()
+      this.updatePosition()
+      // this.focusNode()
+    }
 
-      const el = this.props.triggerNode
+    focusNode () {
+      const { portalIsOpen } = this.props
+      let focusableNode = this.triggerNode
+
+      if (portalIsOpen && this.composedNode) {
+        focusableNode = findFirstFocusableNode(this.composedNode) || this.triggerNode
+      }
+
+      if (focusableNode) {
+        focusableNode.focus()
+      }
+    }
+
+    setTriggerNode () {
+      if (!this.triggerNode) {
+        this.triggerNode = ReactDOM.findDOMNode(this.props.triggerNode)
+      }
+    }
+
+    updatePosition () {
+      const el = this.triggerNode
+      if (!el) return
+
       const clientRect = el.getBoundingClientRect()
-      const offset = 8
+      const offset = popoverOptions.offset
       let reposition = false
       let popoverClientRect
 
-      if (this.popover) {
-        popoverClientRect = this.popover.getBoundingClientRect()
+      if (this.contentNode) {
+        popoverClientRect = this.contentNode.getBoundingClientRect()
         if (clientRect.top + popoverClientRect.top + popoverClientRect.height > window.innerHeight) {
           reposition = true
         }
@@ -83,6 +116,16 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
       }
     }
 
+    handleFocusFirstItem () {
+      this.props.closePortal()
+      this.focusNode()
+    }
+
+    handleFocusLastItem () {
+      this.props.closePortal()
+      this.focusNode()
+    }
+
     render () {
       const {
         className,
@@ -100,13 +143,15 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
         zIndex,
         ...rest
       } = this.props
+      const { position } = this.state
 
       const componentClassName = classNames(
         'c-PopoverWrapper',
         className
       )
 
-      const { position } = this.state
+      const handleFocusFirstItem = this.handleFocusFirstItem.bind(this)
+      // const handleFocusLastItem = this.handleFocusLastItem.bind(this)
       const updatePosition = this.updatePosition.bind(this)
 
       const popoverWrapperStyle = Object.assign({}, style, {
@@ -124,23 +169,29 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
               <div
                 className={componentClassName}
                 style={popoverWrapperStyle}
-                ref={node => { this.popover = node }}
+                ref={node => { this.contentNode = node }}
                 {...rest}
               >
-                <ComposedComponent
-                  openPortal={openPortal}
-                  closePortal={closePortal}
-                  portalIsOpen={portalIsOpen}
-                  isOpen={portalIsOpen}
-                  portalIsMounted={portalIsMounted}
-                  zIndex={zIndex}
-                  {...rest}
-                />
+                <div ref={node => { this.composedNode = node }}>
+                  <ComposedComponent
+                    ref={node => { this.composedNode = node }}
+                    openPortal={openPortal}
+                    closePortal={closePortal}
+                    portalIsOpen={portalIsOpen}
+                    handleFocusFirstItem={handleFocusFirstItem}
+                    isOpen={portalIsOpen}
+                    popoverWrapperNode={this.contentNode}
+                    popoverNode={this.composedNode}
+                    portalIsMounted={portalIsMounted}
+                    zIndex={zIndex}
+                    {...rest}
+                  />
+                </div>
               </div>
             </div>
           </Animate>
           <Animate sequence='fadeIn' in={portalIsOpen} wait={60}>
-            <Overlay onClick={closePortal} style={{position: 'fixed', opacity: 0}} />
+            <Overlay onClick={closePortal} style={{cursor: 'default', position: 'fixed', opacity: 0}} />
           </Animate>
         </div>
       )
@@ -149,7 +200,7 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
 
   PopoverWrapperComponent.propTypes = propTypes
 
-  return PortalWrapper(portalOptions)(PopoverWrapperComponent)
+  return PortalWrapper(popoverOptions)(PopoverWrapperComponent)
 }
 
 export default PopoverWrapper

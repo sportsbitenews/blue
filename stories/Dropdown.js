@@ -1,13 +1,23 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
-import { Dropdown } from '../src/index.js'
+import { Dropdown, Link } from '../src/index.js'
+
+const cb = () => {
+  console.log('action')
+}
 
 storiesOf('Dropdown', module)
   .add('default', () => (
     <div>
-      <Dropdown trigger={<a href='#'>Link</a>}>
+      <Dropdown onOpen={cb} trigger={<Link>Link</Link>} isOpen>
         <div>
-          Content
+          <Link>One</Link>
+        </div>
+        <div>
+          <Link>Two</Link>
+        </div>
+        <div>
+          <Link>Three</Link>
         </div>
       </Dropdown>
     </div>
@@ -15,6 +25,21 @@ storiesOf('Dropdown', module)
   .add('drop-up', () => (
     <div style={{ position: 'fixed', bottom: 0, right: 0 }}>
       <Dropdown trigger={<a href='#'>Link</a>}>
+        <div>
+          <Link>One</Link>
+        </div>
+        <div>
+          <Link>Two</Link>
+        </div>
+        <div>
+          <Link>Three</Link>
+        </div>
+      </Dropdown>
+    </div>
+  ))
+  .add('popover', () => (
+    <div>
+      <Dropdown onOpen={cb} trigger={<Link>Link</Link>}>
         <div>
           Content
         </div>
