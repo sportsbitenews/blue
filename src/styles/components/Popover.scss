@@ -1,0 +1,35 @@
+.c-Popover {
+  @import "../resets/base";
+  position: relative;
+
+  &__arrow {
+    border-color: transparent;
+    border-bottom-color: _color(grey, 600);
+    border-width: 11px;
+    border-style: solid;
+    border-top-width: 0;
+    display: block;
+    height: 0;
+    left: 50%;
+    margin-left: -11px;
+    position: absolute;
+    top: -10px;
+    width: 0;
+
+    &:after {
+      border-color: transparent;
+      border-bottom-color: white;
+      border-width: 10px;
+      border-style: solid;
+      border-top-width: 0;
+      content: " ";
+      display: block;
+      height: 0;
+      left: 50%;
+      margin-left: -10px;
+      position: absolute;
+      top: 1px;
+      width: 0;
+    }
+  }
+}

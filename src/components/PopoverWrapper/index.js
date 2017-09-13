@@ -182,7 +182,9 @@ const PopoverWrapper = (options = defaultOptions) => ComposedComponent => {
                     isOpen={portalIsOpen}
                     popoverWrapperNode={this.contentNode}
                     popoverNode={this.composedNode}
+                    popoverPosition={position}
                     portalIsMounted={portalIsMounted}
+                    triggerNode={this.triggerNode}
                     zIndex={zIndex}
                     {...rest}
                   />

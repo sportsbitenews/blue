@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom'
 import Animate from '../Animate'
 import KeypressListener from '../KeypressListener'
 import { default as Portal, propTypes as portalTypes } from '../Portal'
+import { portalWrapperTypes } from './propTypes'
 import Keys from '../../constants/Keys'
 import { createUniqueIDFactory } from '../../utilities/id'
 
@@ -15,10 +16,11 @@ const defaultOptions = {
 }
 
 const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
-  const propTypes = portalTypes
+  const propTypes = Object.assign({}, portalTypes, portalWrapperTypes)
 
   const defaultProps = {
     isOpen: false,
+    triggerOn: 'click',
     timeout: 0
   }
 
@@ -92,6 +94,20 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
       }
     }
 
+    handleTriggerOnEvent (event) {
+      const { triggerOn } = this.props
+      const { isOpen } = this.state
+      const remappedTriggerOn = {
+        click: triggerOn === 'click',
+        onfocus: triggerOn === 'focus',
+        mouseenter: triggerOn === 'hover'
+      }
+
+      if (!isOpen && remappedTriggerOn[event.type]) {
+        this.openPortal()
+      }
+    }
+
     render () {
       const {
         exact,
@@ -103,6 +119,7 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
         path,
         renderTo,
         trigger,
+        triggerOn,
         timeout,
         ...rest
       } = this.props
@@ -112,6 +129,7 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
       const openPortal = this.openPortal.bind(this)
       const handleOnClose = this.handleOnClose.bind(this)
       const handleOnDownArrow = this.handleOnDownArrow.bind(this)
+      const handleTriggerOnEvent = this.handleTriggerOnEvent.bind(this)
 
       const uniqueIndex = parseInt(id.replace(options.id, ''), 10)
       const zIndex = options.zIndex ? options.zIndex + uniqueIndex : null
@@ -153,7 +171,9 @@ const PortalWrapper = (options = defaultOptions) => ComposedComponent => {
 
       const triggerMarkup = trigger
         ? React.cloneElement(trigger, {
-          onClick: openPortal,
+          onClick: handleTriggerOnEvent,
+          onMouseEnter: handleTriggerOnEvent,
+          onFocus: handleTriggerOnEvent,
           ref: node => { this.triggerNode = node },
           onKeyUp: handleOnDownArrow
         })
